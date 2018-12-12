@@ -550,7 +550,7 @@ int main(int argc, char **argv) {
 		// Change os_type to 1 or 2, after being sure that you have ImageMagick installed.
 		convertPPMToPNG(cameras[i].outputFileName, 99);
 	}
-	system("pause");
+	
 	return 0;
 
 }
