@@ -438,6 +438,7 @@ void forwardRenderingPipeline(Camera cam) {
 		createModelTransformationMatrix(model, transMatrix);
 		createCameraTransformationMatrix(cam, cameraMatrix);
 		// Compose the matrices
+		assignedMultiplication(cameraCoord, perspectiveMatrix);
 		assignedMultiplication(cameraCoord, cameraMatrix);
 		assignedMultiplication(cameraCoord, transMatrix);
 		assignedMultiplication(resultingMatrix, viewPortMatrix);
