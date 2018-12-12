@@ -412,7 +412,7 @@ void triangleRasterize(const Vec2& v0, const Vec2& v1, const Vec2& v2) {
 	}
 }
 inline Vec3 getTriangleNormal(Vec3 u, Vec3 v) noexcept {
-	return Vec3{ u.y*v.z - u.z*v.y ,u.z*v.x - u.x*v.z,u.x*v.y - u.y*v.x };
+	return crossProductVec3(u,v);
 }
 bool solidCulling(Vec3& v, Vec3&n) {
 	return (v.x*n.x + v.y*n.y + v.z* n.z) > 0;
@@ -458,14 +458,14 @@ void forwardRenderingPipeline(Camera cam) {
 					cullVec.emplace_back(Vec3{ r[0],r[1],r[2] });
 
 				}
-				auto normal = normalizeVec3(getTriangleNormal(subtractVec3(cullVec[1], cullVec[0]), subtractVec3(cullVec[2], cullVec[0])));
-				auto center = Vec3{ (cullVec[0].x + cullVec[1].x + cullVec[2].x) / 3, (cullVec[0].y + cullVec[1].y + cullVec[2].y) / 3 ,(cullVec[0].z + cullVec[1].z + cullVec[2].z) / 3 };
-				auto v = subtractVec3(center, cam.pos);
-				if (solidCulling(v, normal)) {
+				auto normal = normalizeVec3(getTriangleNormal(subtractVec3(cullVec[2], cullVec[0]), subtractVec3(cullVec[1], cullVec[0])));
+				auto center = Vec3{ (cullVec[0].x + cullVec[1].x + cullVec[2].x) / 3.0, (cullVec[0].y + cullVec[1].y + cullVec[2].y) / 3.0 ,(cullVec[0].z + cullVec[1].z + cullVec[2].z) / 3.0 };
+				if (solidCulling(center, normal)) {
 					cullVec.clear();
 					continue;
 				}
 			}
+
 			for (int j = 0; j < 3; j++) {
 				auto &vertex = vertices[modelVertices.vertexIds[j]];
 				double v[4] = { vertex.x, vertex.y, vertex.z, 1 };
@@ -475,9 +475,11 @@ void forwardRenderingPipeline(Camera cam) {
 				vec.emplace_back(convertToVec2(r, vertex));
 
 			}
+
 			if (model.type) {
 				triangleRasterize(vec[0], vec[1], vec[2]);
-			} else {
+			} 
+			else {
 				lineRasterizer(vec[0], vec[1]);
 				lineRasterizer(vec[1], vec[2]);
 				lineRasterizer(vec[2], vec[0]);
@@ -492,9 +494,6 @@ void forwardRenderingPipeline(Camera cam) {
 		// Continue with 'resultingMatrix'
 	}
 }
-
-// TODO: IMPLEMENT HERE
-
 
 int main(int argc, char **argv) {
 	int i, j;
